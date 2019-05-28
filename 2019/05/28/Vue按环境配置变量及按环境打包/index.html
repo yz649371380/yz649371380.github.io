@@ -1,0 +1,184 @@
+
+<!DOCTYPE html>
+<html lang class="loading">
+<head><meta name="generator" content="Hexo 3.8.0">
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="viewport" content="width=device-width, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Vue按环境配置变量及按环境打包 - y&amp;z blog</title>
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="google" content="notranslate">
+    <meta name="keywords" content="y&amp;z,"> 
+    <meta name="description" content="开发环境与生产环境会遇到接口地址不一致以及配置的变量不一致的问题，打包过程中也会分开发环境和生产环境，有的可能有好几套环境变量，下面将给大家分享vue按环境配置变量和按环境打包的相关知识
+1.搭建v,"> 
+    <meta name="author" content="y&amp;z"> 
+    <link rel="alternative" href="atom.xml" title="y&amp;z blog" type="application/atom+xml"> 
+    <link rel="icon" href="/img/favicon.png"> 
+    <link rel="stylesheet" href="//cdn.jsdelivr.net/npm/gitalk@1/dist/gitalk.css">
+    <link rel="stylesheet" href="/css/diaspora.css">
+    <script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+    <script>
+         (adsbygoogle = window.adsbygoogle || []).push({
+              google_ad_client: "ca-pub-8691406134231910",
+              enable_page_level_ads: true
+         });
+    </script>
+    <script async custom-element="amp-auto-ads" src="https://cdn.ampproject.org/v0/amp-auto-ads-0.1.js">
+    </script>
+</head>
+</html>
+<body class="loading">
+    <span id="config-title" style="display:none">y&amp;z blog</span>
+    <div id="loader"></div>
+    <div id="single">
+    <div id="top" style="display: block;">
+    <div class="bar" style="width: 0;"></div>
+    <a class="icon-home image-icon" href="javascript:;" data-url="http://yangzhao.online"></a>
+    <div title="播放/暂停" class="icon-play"></div>
+    <h3 class="subtitle">Vue按环境配置变量及按环境打包</h3>
+    <div class="social">
+        <!--<div class="like-icon">-->
+            <!--<a href="javascript:;" class="likeThis active"><span class="icon-like"></span><span class="count">76</span></a>-->
+        <!--</div>-->
+        <div>
+            <div class="share">
+                <a title="获取二维码" class="icon-scan" href="javascript:;"></a>
+            </div>
+            <div id="qr"></div>
+        </div>
+    </div>
+    <div class="scrollbar"></div>
+</div>
+
+    <div class="section">
+        <div class="article">
+    <div class="main">
+        <h1 class="title">Vue按环境配置变量及按环境打包</h1>
+        <div class="stuff">
+            <span>五月 28, 2019</span>
+            
+  <ul class="post-tags-list"><li class="post-tags-list-item"><a class="post-tags-list-link" href="/tags/Vue/">Vue</a></li></ul>
+
+
+        </div>
+        <div class="content markdown">
+            <p>开发环境与生产环境会遇到接口地址不一致以及配置的变量不一致的问题，打包过程中也会分开发环境和生产环境，有的可能有好几套环境变量，下面将给大家分享vue按环境配置变量和按环境打包的相关知识</p>
+<h4 id="1-搭建vue项目"><a href="#1-搭建vue项目" class="headerlink" title="1.搭建vue项目"></a>1.搭建vue项目</h4><p>大家可按官网教程 <a href="https://cli.vuejs.org/zh/guide/installation.html" target="_blank" rel="noopener">https://cli.vuejs.org/zh/guide/installation.html</a> 自行搭建，推荐使用vue-cli搭建</p>
+<h4 id="2-配置环境变量"><a href="#2-配置环境变量" class="headerlink" title="2.配置环境变量"></a>2.配置环境变量</h4><p>在项目的根目录创建.env.local文件用于本地开发环境，创建.env.production文件用于生产环境。以.env开头，后面可使用任意的名称<br><img src="/blogImg/0528/vue.png" alt="vue"></p>
+<p>你可以替换你的项目根目录中的下列文件来指定环境变量：</p>
+<pre><code>.env                # 在所有的环境中被载入
+.env.local          # 在所有的环境中被载入，但会被 git 忽略
+.env.[mode]         # 只在指定的模式中被载入
+.env.[mode].local   # 只在指定的模式中被载入，但会被 git 忽略
+</code></pre><h4 id="3-环境变量的使用"><a href="#3-环境变量的使用" class="headerlink" title="3.环境变量的使用"></a>3.环境变量的使用</h4><p>打开.env.local文件，创建一个测试变量，一个环境文件只包含环境变量的“键=值”对：</p>
+<pre><code>//.env.local
+NODE_ENV = &apos;local&apos;
+
+FOO=bar
+VUE_APP_MYTEST = mytest
+</code></pre><p>ps：NODE_ENV会设置当前应用运行的模式</p>
+<p>只有以 VUE_APP_ 开头的变量会被 webpack.DefinePlugin 静态嵌入到客户端侧的包中。你可以在应用的代码中这样访问它们：</p>
+<pre><code>console.log(process.env.VUE_APP_SECRET)
+</code></pre><p>除了 VUE_APP_* 变量之外，在你的应用代码中始终可用的还有两个特殊的变量：</p>
+<pre><code>NODE_ENV - 会是 &quot;development&quot;、&quot;production&quot; 或 &quot;test&quot; 中的一个。具体的值取决于应用运行的模式。
+BASE_URL - 会和 vue.config.js 中的 publicPath 选项相符，即你的应用会部署到的基础路径。
+</code></pre><p>有的时候你可能有一些不应该提交到代码仓库中的变量，尤其是当你的项目托管在公共仓库时。这种情况下你应该使用一个 .env.local 文件取而代之。本地环境文件默认会被忽略，且出现在 .gitignore 中。</p>
+<p>.local 也可以加在指定模式的环境文件上，比如 .env.development.local 将会在 development 模式下被载入，且被 git 忽略。</p>
+<h4 id="4-配置package-json实现按环境打包"><a href="#4-配置package-json实现按环境打包" class="headerlink" title="4.配置package.json实现按环境打包"></a>4.配置package.json实现按环境打包</h4><p>打开package.json配置文件，在scripts里面配置以下选项：</p>
+<pre><code>&quot;scripts&quot;: {
+   &quot;serve&quot;: &quot;vue-cli-service serve --mode local&quot;,        //以开发环境变量运行
+   &quot;serve&quot;: &quot;vue-cli-service serve --mode production&quot;,   //以生产环境变量运行
+   &quot;build&quot;: &quot;vue-cli-service build --mode production&quot;,   //以生产环境变量打包
+   &quot;build_dev&quot;: &quot;vue-cli-service build --mode local&quot;,    //以开发环境变量打包
+   &quot;lint&quot;: &quot;vue-cli-service lint&quot;
+ },
+</code></pre><p>运行：</p>
+<pre><code>npm run serve
+</code></pre><p>将启动开发环境，所使用的变量为.env.local配置文件中的变量，–mode 指定环境名称，需与.env配置文件同名</p>
+<p>至此，vue实现按环境配置及打包的功能已完成</p>
+<p>参考文档 <a href="https://cli.vuejs.org/zh/guide/mode-and-env.html#%E6%A8%A1%E5%BC%8F" target="_blank" rel="noopener">https://cli.vuejs.org/zh/guide/mode-and-env.html#%E6%A8%A1%E5%BC%8F</a></p>
+
+            <!--[if lt IE 9]><script>document.createElement('audio');</script><![endif]-->
+            <audio id="audio" loop="1" preload="auto" controls="controls" data-autoplay="false">
+                <source type="audio/mpeg" src>
+            </audio>
+            
+                <ul id="audio-list" style="display:none">
+                    
+                </ul>
+            
+        </div>
+        
+    <div id="gitalk-container" class="comment link" data-ae="true" data-ci="8a582724a9e8ff48b476" data-cs="e48ebfa5cd6765a9b820d214b09490405d57e792" data-r="blog-comment" data-o="yz649371380" data-a="yz649371380" data-d="false">查看评论</div>
+
+
+    </div>
+    
+</div>
+
+
+    </div>
+</div>
+</body>
+<script src="//cdn.jsdelivr.net/npm/gitalk@1/dist/gitalk.min.js"></script>
+<script src="//lib.baomitu.com/jquery/1.8.3/jquery.min.js"></script>
+<script src="/js/plugin.js"></script>
+<script src="/js/diaspora.js"></script>
+<link rel="stylesheet" href="/photoswipe/photoswipe.css">
+<link rel="stylesheet" href="/photoswipe/default-skin/default-skin.css">
+<script src="/photoswipe/photoswipe.min.js"></script>
+<script src="/photoswipe/photoswipe-ui-default.min.js"></script>
+
+<!-- Root element of PhotoSwipe. Must have class pswp. -->
+<div class="pswp" tabindex="-1" role="dialog" aria-hidden="true">
+    <!-- Background of PhotoSwipe. 
+         It's a separate element as animating opacity is faster than rgba(). -->
+    <div class="pswp__bg"></div>
+    <!-- Slides wrapper with overflow:hidden. -->
+    <div class="pswp__scroll-wrap">
+        <!-- Container that holds slides. 
+            PhotoSwipe keeps only 3 of them in the DOM to save memory.
+            Don't modify these 3 pswp__item elements, data is added later on. -->
+        <div class="pswp__container">
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+        </div>
+        <!-- Default (PhotoSwipeUI_Default) interface on top of sliding area. Can be changed. -->
+        <div class="pswp__ui pswp__ui--hidden">
+            <div class="pswp__top-bar">
+                <!--  Controls are self-explanatory. Order can be changed. -->
+                <div class="pswp__counter"></div>
+                <button class="pswp__button pswp__button--close" title="Close (Esc)"></button>
+                <button class="pswp__button pswp__button--share" title="Share"></button>
+                <button class="pswp__button pswp__button--fs" title="Toggle fullscreen"></button>
+                <button class="pswp__button pswp__button--zoom" title="Zoom in/out"></button>
+                <!-- Preloader demo http://codepen.io/dimsemenov/pen/yyBWoR -->
+                <!-- element will get class pswp__preloader--active when preloader is running -->
+                <div class="pswp__preloader">
+                    <div class="pswp__preloader__icn">
+                      <div class="pswp__preloader__cut">
+                        <div class="pswp__preloader__donut"></div>
+                      </div>
+                    </div>
+                </div>
+            </div>
+            <div class="pswp__share-modal pswp__share-modal--hidden pswp__single-tap">
+                <div class="pswp__share-tooltip"></div> 
+            </div>
+            <button class="pswp__button pswp__button--arrow--left" title="Previous (arrow left)">
+            </button>
+            <button class="pswp__button pswp__button--arrow--right" title="Next (arrow right)">
+            </button>
+            <div class="pswp__caption">
+                <div class="pswp__caption__center"></div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+
+</html>
